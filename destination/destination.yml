@@ -1,0 +1,33 @@
+Resources:
+  DestinationBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: 878489430596-destination-bucket     # Bucket Name
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+          - ServerSideEncryptionByDefault:
+              SSEAlgorithm: AES256
+      VersioningConfiguration:
+        Status: Enabled
+  DestinationBucketPolicy:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      Bucket: !Ref DestinationBucket
+      PolicyDocument:
+        Statement:
+          - Sid: AllowEngStatsAcctReplicationAndSync
+            Effect: Allow
+            Action:
+              - "s3:GetBucketVersioning"
+              - "s3:PutBucketVersioning"
+              - "s3:ReplicateObject"
+              - "s3:ReplicateDelete"
+              - "s3:ListBucket"
+              - "s3:PutObject"
+              - "s3:ObjectOwnerOverrideToBucketOwner"
+            Resource:
+              - !Sub "arn:aws:s3:::${DestinationBucketName}"
+              - !Sub "arn:aws:s3:::${DestinationBucketName}/*"
+            Principal:
+              AWS:
+                - "arn:aws:iam::585442104281:role/acloudguru-data-scientist-leads"

@@ -1,0 +1,7 @@
+Resources:
+  DestinationBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: 910215414343-source-bucket     # Bucket Name
+      VersioningConfiguration:
+        Status: Enabled
