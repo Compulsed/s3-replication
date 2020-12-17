@@ -1,7 +1,64 @@
 Resources:
-  DestinationBucket:
+  SourceBucket:
     Type: AWS::S3::Bucket
     Properties:
       BucketName: 910215414343-source-bucket     # Bucket Name
       VersioningConfiguration:
         Status: Enabled
+      ReplicationConfiguration:
+        Role:
+          'Fn::GetAtt':
+            - SourceBucketReplicationRole
+            - Arn
+        Rules:
+          - Destination:
+              Bucket: 'arn:aws:s3:::878489430596-destination-bucket'  # <Destination Bucket Value>
+              StorageClass: STANDARD
+            Id: Backup
+            Prefix: ''
+            Status: Enabled
+
+  SourceBucketReplicationRole:
+    Type: 'AWS::IAM::Role'
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+          - Action:
+              - 'sts:AssumeRole'
+            Effect: Allow
+            Principal:
+              Service:
+                - s3.amazonaws.com
+
+  SourceBucketReplicationPolicy:
+    Type: 'AWS::IAM::Policy'
+    Properties:
+      PolicyDocument:
+        Statement:
+          - Action:
+              - 's3:GetReplicationConfiguration'
+              - 's3:ListBucket'
+            Effect: Allow
+            Resource:
+              - 'Fn::Join':
+                  - ''
+                  - - 'arn:aws:s3:::'
+                    - Ref: SourceBucket
+          - Action:
+              - 's3:GetObjectVersion'
+              - 's3:GetObjectVersionAcl'
+            Effect: Allow
+            Resource:
+              - 'Fn::Join':
+                  - ''
+                  - - 'arn:aws:s3:::'
+                    - Ref: SourceBucket
+                    - /*
+          - Action:
+              - 's3:ReplicateObject'
+              - 's3:ReplicateDelete'
+            Effect: Allow
+            Resource: 'arn:aws:s3:::878489430596-destination-bucket/*' # <Destination Bucket Value>
+      PolicyName: SourceBucketReplicationPolicy
+      Roles:
+        - Ref: SourceBucketReplicationRole

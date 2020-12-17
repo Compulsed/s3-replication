@@ -2,7 +2,7 @@ Resources:
   DestinationBucket:
     Type: AWS::S3::Bucket
     Properties:
-      BucketName: 878489430596-destination-bucket     # Bucket Name
+      BucketName: 878489430596-destination-bucket # Bucket Name
       BucketEncryption:
         ServerSideEncryptionConfiguration:
           - ServerSideEncryptionByDefault:
@@ -26,8 +26,8 @@ Resources:
               - "s3:PutObject"
               - "s3:ObjectOwnerOverrideToBucketOwner"
             Resource:
-              - !Sub "arn:aws:s3:::${DestinationBucketName}"
-              - !Sub "arn:aws:s3:::${DestinationBucketName}/*"
+              - !Sub "arn:aws:s3:::878489430596-destination-bucket"
+              - !Sub "arn:aws:s3:::878489430596-destination-bucket/*"
             Principal:
               AWS:
-                - "arn:aws:iam::585442104281:role/acloudguru-data-scientist-leads"
+                - "arn:aws:iam::910215414343:role/s3-replication-source-sta-SourceBucketReplicationR-MX1U6YWK5KIW" # Source Role which can prefer the replication
